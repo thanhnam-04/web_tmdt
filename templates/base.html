@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="MỘC Store - cửa hàng thời trang dã ngoại Việt Nam.">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon/favicon-32x32.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/libs.bundle.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.bundle.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/vietnam.css', v='3') }}">
+  <title>{% block title %}MỘC Store{% endblock %}</title>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top moc-navbar">
+    <div class="container-fluid px-3 px-lg-5 py-2">
+      <a class="navbar-brand moc-logo" href="{{ url_for('index') }}">MỘC<span>.</span><small>VIETNAM OUTDOORS</small></a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-label="Mở menu"><i class="ri-menu-line ri-lg"></i></button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav mx-auto gap-lg-2">
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('search', q='nam') }}">Nam</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('search', q='nữ') }}">Nữ</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('search', q='hoodie') }}">Hoodie</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('search', q='giày trekking') }}">Giày trekking</a></li>
+          <li class="nav-item"><a class="nav-link text-orange fw-bold" href="{{ url_for('search', q='') }}">Hàng mới</a></li>
+        </ul>
+        <div class="d-flex align-items-center gap-1 nav-icons">
+          <form action="{{ url_for('search') }}" method="get" class="header-search d-none d-xl-flex">
+            <input name="q" value="{{ request.args.get('q','') }}" placeholder="Tìm sản phẩm..." aria-label="Tìm sản phẩm">
+            <button aria-label="Tìm kiếm"><i class="ri-search-2-line"></i></button>
+          </form>
+          <a href="{{ url_for('login') if not current_user else url_for('admin') if current_user.is_admin else url_for('account') }}" class="btn btn-link px-2" title="Tài khoản"><i class="ri-user-line ri-lg"></i></a>
+          {% if current_user %}<a href="{{ url_for('logout') }}" class="small text-decoration-none ms-1" title="Đăng xuất">Thoát</a>{% endif %}
+          <a href="{{ url_for('cart') }}" class="btn btn-link px-2 position-relative" title="Giỏ hàng"><i class="ri-shopping-cart-2-line ri-lg"></i>{% if cart_count %}<span class="cart-badge">{{ cart_count }}</span>{% endif %}</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}<div class="toast-wrap">{% for category, message in messages %}<div class="alert alert-{{ category }} shadow-sm alert-dismissible fade show" role="alert">{{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>{% endfor %}</div>{% endif %}
+  {% endwith %}
+
+  <main>{% block content %}{% endblock %}</main>
+
+  <footer class="bg-dark text-white mt-10">
+    <div class="bg-light text-dark py-4"><div class="container d-md-flex justify-content-between align-items-center"><p class="lead fw-bolder mb-2 mb-md-0">Theo chân MỘC trên hành trình Việt Nam</p><div class="d-flex gap-3 fs-4"><i class="ri-facebook-fill"></i><i class="ri-instagram-line"></i><i class="ri-tiktok-line"></i><i class="ri-youtube-line"></i></div></div></div>
+    <div class="container pt-7">
+      <div class="row g-2 footer-gallery">{% for number in range(1,7) %}<div class="col-4 col-md-2"><img src="{{ url_for('static', filename='images/instagram/instagram-' ~ number ~ '.jpg') }}" alt="Khoảnh khắc ngoài trời" class="img-fluid"></div>{% endfor %}</div>
+      <div class="row py-7 mt-4 border-top border-secondary">
+        <div class="col-12 col-md-4 mb-5"><a class="moc-logo text-white" href="{{ url_for('index') }}">MỘC<span>.</span><small class="text-white">VIETNAM OUTDOORS</small></a><p class="opacity-75 mt-4 col-lg-9">Trang phục và phụ kiện dành cho những hành trình gần gũi với thiên nhiên Việt Nam.</p></div>
+        <div class="col-6 col-md-2"><h6 class="fw-bolder mb-4">Mua sắm</h6><a href="{{ url_for('search', q='hoodie') }}">Hoodie</a><a href="{{ url_for('search', q='giày trekking') }}">Giày trekking</a><a href="{{ url_for('cart') }}">Giỏ hàng</a></div>
+        <div class="col-6 col-md-2"><h6 class="fw-bolder mb-4">Hỗ trợ</h6><a href="#">Giao nhận</a><a href="#">Đổi trả</a><a href="{{ url_for('account') }}">Đơn hàng của tôi</a></div>
+        <div class="col-12 col-md-4 mt-5 mt-md-0"><h6 class="fw-bolder mb-3">Nhận tin từ MỘC</h6><p class="opacity-75">Ưu đãi và câu chuyện hành trình gửi tới email của bạn.</p><div class="input-group"><input class="form-control py-3" placeholder="Email của bạn"><button class="btn btn-orange px-4"><i class="ri-arrow-right-line"></i></button></div></div>
+      </div>
+      <div class="py-4 border-top border-secondary d-flex flex-column flex-md-row justify-content-between small opacity-75"><span>© 2026 MỘC Store · Đi cùng bạn mỗi ngày</span><span>Giao diện Alpine © PixelRocket · MIT License</span></div>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/vendor.bundle.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/theme.bundle.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

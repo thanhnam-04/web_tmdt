@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Giỏ hàng — MỘC Store{% endblock %}
+
+{% block content %}
+  <section class="page-title bg-light"><div class="container py-7"><p class="small fw-bolder text-uppercase tracking-wider text-muted">Lựa chọn của bạn</p><h1 class="display-4 fw-bold">Giỏ hàng</h1><div class="checkout-steps mt-4"><span class="active"><b>1</b> Giỏ hàng</span><i></i><span><b>2</b> Giao hàng</span><i></i><span><b>3</b> Hoàn tất</span></div></div></section>
+
+  <section class="container py-7">
+    <div class="row g-5">
+      <div class="col-12 col-lg-8">
+        <div class="d-flex justify-content-between align-items-center mb-4"><h4 class="fw-bold mb-0">{{ cart_count }} sản phẩm</h4><a href="{{ url_for('index') }}">Tiếp tục mua sắm <i class="ri-arrow-right-line"></i></a></div>
+
+        {% if items %}
+          {% for item in items %}
+            {% set pic = visual(item.product.id) %}
+            <article class="cart-row d-flex gap-3 gap-md-4 py-4 border-top">
+              <a href="{{ url_for('product', id=item.product.id) }}"><img src="{{ url_for('static', filename='images/products/' ~ pic.image) }}" alt="{{ item.product.name }}"></a>
+              <div class="flex-grow-1 min-width-0"><p class="small text-uppercase text-muted fw-bold mb-1">{{ item.category }}</p><h5 class="fw-bold"><a class="text-decoration-none" href="{{ url_for('product', id=item.product.id) }}">{{ item.product.name }}</a></h5><p class="small text-muted">{{ item.color }} · {{ 'Cỡ' if item.category == 'Giày trekking' else 'Size' }} {{ item.size }}</p>
+                <form class="quantity-form" action="{{ url_for('update_cart') }}" method="post"><input type="hidden" name="line_key" value="{{ item.key }}"><button class="btn btn-outline-dark btn-sm" name="action" value="decrease" aria-label="Giảm số lượng">−</button><span>{{ item.quantity }}</span><button class="btn btn-outline-dark btn-sm" name="action" value="increase" aria-label="Tăng số lượng">＋</button></form>
+              </div>
+              <div class="text-end cart-line-price"><b>{{ item.subtotal|vnd }}</b><small>{{ item.product.price|vnd }} / sản phẩm</small><form action="{{ url_for('update_cart') }}" method="post"><input type="hidden" name="line_key" value="{{ item.key }}"><button class="btn btn-link d-block ms-auto mt-4 p-0 small text-danger" name="action" value="remove"><i class="ri-delete-bin-line"></i> Xóa</button></form></div>
+            </article>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state border py-8"><i class="ri-shopping-bag-line ri-4x"></i><h3>Giỏ hàng đang trống</h3><p class="text-muted">Chọn một món đồ phù hợp cho hành trình sắp tới.</p><a class="btn btn-dark mt-3" href="{{ url_for('index') }}">Chọn sản phẩm</a></div>
+        {% endif %}
+
+        <div class="cart-policy mt-6"><div class="d-flex gap-3"><i class="ri-shield-check-line ri-2x text-orange"></i><div><h4 class="fw-bold">Mua sắm yên tâm</h4><p class="mb-0 text-muted">Đổi size trong 30 ngày, giao hàng toàn quốc và hỗ trợ bằng tiếng Việt.</p></div></div></div>
+      </div>
+
+      <aside class="col-12 col-lg-4">
+        <div class="order-summary bg-light p-4 p-md-5 sticky-lg-top">
+          <h4 class="fw-bold mb-4">Tóm tắt đơn hàng</h4>
+          <div class="d-flex justify-content-between mb-3"><span>Tạm tính</span><b>{{ subtotal|vnd }}</b></div>
+          <div class="d-flex justify-content-between mb-3"><span>Giảm giá{% if coupon %} ({{ coupon }}){% endif %}</span><b class="text-danger">−{{ discount|vnd }}</b></div>
+          <div class="d-flex justify-content-between mb-3"><span>Vận chuyển</span><b class="{{ 'text-success' if shipping == 0 else '' }}">{{ 'Miễn phí' if shipping == 0 else shipping|vnd }}</b></div>
+          <form class="input-group my-4" action="{{ url_for('apply_coupon') }}" method="post"><input class="form-control" name="coupon" value="{{ coupon or '' }}" placeholder="Mã ưu đãi"><button class="btn btn-dark">Áp dụng</button></form>
+          <p class="small text-muted">Thử mã <code>MOCTREK10</code> để giảm 10%.</p>
+          <hr><div class="d-flex justify-content-between align-items-end my-4"><span><b>Tổng cộng</b><small class="d-block text-muted">Đã gồm VAT</small></span><strong class="fs-3">{{ grand_total|vnd }}</strong></div>
+          {% if items %}<a class="btn btn-orange text-white w-100 py-3 fw-bold" href="{{ url_for('checkout') }}">Tiến hành thanh toán <i class="ri-arrow-right-line"></i></a>{% else %}<button class="btn btn-secondary w-100 py-3" disabled>Giỏ hàng trống</button>{% endif %}
+          <p class="small text-center text-muted mt-3"><i class="ri-lock-line"></i> Đây là thanh toán mô phỏng, không thu tiền thật</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+{% endblock %}

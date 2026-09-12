@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name if product else 'Không tìm thấy' }} — MỘC Store{% endblock %}
+
+{% block content %}
+  <div class="container py-4 small breadcrumbs">
+    <a href="{{ url_for('index') }}">Trang chủ</a><i class="ri-arrow-right-s-line"></i>
+    <a href="{{ url_for('search', q='') }}">Sản phẩm</a><i class="ri-arrow-right-s-line"></i>
+    <b>{{ product.name if product else 'ID ' ~ product_id }}</b>
+  </div>
+
+  {% if product %}
+    {% set pic = visual(product.id) %}
+    {% set options = product_options(product.id) %}
+    <section class="container pb-8">
+      <div class="row g-5 g-lg-8">
+        <div class="col-12 col-md-6">
+          <div class="product-main-image bg-light"><img id="mainProductImage" src="{{ url_for('static', filename='images/products/' ~ pic.image) }}" alt="{{ product.name }}" class="img-fluid w-100"></div>
+          <div class="row g-2 mt-2 product-thumbs">
+            <div class="col-3"><button type="button" class="active" data-image="{{ url_for('static', filename='images/products/' ~ pic.image) }}"><img class="img-fluid" src="{{ url_for('static', filename='images/products/' ~ pic.image) }}" alt="Mặt trước"></button></div>
+            {% if pic.hover != pic.image %}<div class="col-3"><button type="button" data-image="{{ url_for('static', filename='images/products/' ~ pic.hover) }}"><img class="img-fluid" src="{{ url_for('static', filename='images/products/' ~ pic.hover) }}" alt="Chi tiết"></button></div>{% endif %}
+          </div>
+        </div>
+
+        <div class="col-12 col-md-6">
+          <p class="small fw-bolder text-uppercase tracking-wider text-muted">{{ options.category }} · Còn {{ product.stock }}</p>
+          <h1 class="display-5 fw-bold">{{ product.name }}</h1>
+          <div class="d-flex flex-wrap gap-3 align-items-center my-3"><span class="text-orange"><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i></span><b>4.8</b><a href="#reviews">128 đánh giá</a><span class="text-muted">Đã bán 320</span></div>
+          <p class="lead">{{ product.description }}</p>
+          <div class="d-flex align-items-end gap-3 my-4"><h2 class="fw-bold mb-0">{{ product.price|vnd }}</h2><del class="text-muted">{{ (product.price * 1.2)|int|vnd }}</del><span class="badge bg-danger">-17%</span></div>
+          <hr>
+
+          <form action="{{ url_for('add_cart', product_id=product.id) }}" method="post" class="product-options">
+            <fieldset class="mb-4">
+              <legend class="fs-6 fw-bolder mb-3">Màu sắc: <span id="selectedColor">{{ options.colors[0].label }}</span></legend>
+              <div class="moc-colour-options">
+                {% for color in options.colors %}<label title="{{ color.label }}"><input type="radio" name="color" value="{{ color.key }}" data-label="{{ color.label }}" {{ 'checked' if loop.first else '' }}><span class="moc-color-swatch" style="--swatch: {{ color.hex }}"></span></label>{% endfor %}
+              </div>
+            </fieldset>
+
+            <fieldset class="mb-4">
+              <div class="d-flex justify-content-between align-items-center mb-3"><legend class="fs-6 fw-bolder mb-0">{{ 'Cỡ giày' if options.size_kind == 'shoe' else 'Kích cỡ' }}: <span id="selectedSize">{{ options.default_size }}</span></legend><button class="btn btn-link p-0 small" type="button" data-bs-toggle="modal" data-bs-target="#sizeGuide"><i class="ri-ruler-line"></i> Hướng dẫn chọn size</button></div>
+              <div class="size-options">
+                {% for size in options.sizes %}<label><input type="radio" name="size" value="{{ size }}" {{ 'checked' if size == options.default_size else '' }}><span>{{ size }}</span></label>{% endfor %}
+              </div>
+            </fieldset>
+
+            <div class="d-flex gap-3 mb-4">
+              <div class="moc-quantity-picker"><button type="button" data-quantity="minus">−</button><input id="quantity" name="quantity" value="1" min="1" max="5" readonly aria-label="Số lượng"><button type="button" data-quantity="plus">＋</button></div>
+              <button class="btn btn-orange text-white flex-grow-1 py-3 fw-bold">Thêm vào giỏ <i class="ri-shopping-cart-2-line ms-2"></i></button>
+            </div>
+          </form>
+
+          <div class="delivery-panel mt-4"><div><i class="ri-truck-line"></i><p><b>Giao dự kiến 2–4 ngày</b><small>Miễn phí với đơn từ 799.000 ₫</small></p></div><div><i class="ri-arrow-go-back-line"></i><p><b>Đổi size trong 30 ngày</b><small>Giữ nguyên tem mác sản phẩm</small></p></div></div>
+        </div>
+      </div>
+    </section>
+  {% else %}
+    <div class="container empty-state py-10"><i class="ri-compass-3-line ri-4x"></i><h2>Không có sản phẩm phù hợp</h2><p>ID “{{ product_id }}” không trả về bản ghi.</p><a class="btn btn-dark" href="{{ url_for('index') }}">Về trang chủ</a></div>
+  {% endif %}
+
+  <div class="modal fade" id="sizeGuide" tabindex="-1" aria-labelledby="sizeGuideTitle" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title fw-bold" id="sizeGuideTitle">Hướng dẫn chọn size</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+    {% if product and options.size_kind == 'shoe' %}
+      <p class="text-muted">Đo chiều dài bàn chân từ gót đến ngón dài nhất.</p><div class="table-responsive"><table class="table text-center"><thead><tr><th>Cỡ</th><th>Chiều dài chân</th></tr></thead><tbody>{% for size, length in [('36','22,8 cm'),('37','23,5 cm'),('38','24,1 cm'),('39','24,8 cm'),('40','25,4 cm'),('41','26,0 cm'),('42','26,7 cm'),('43','27,3 cm'),('44','27,9 cm')] %}{% if size in options.sizes %}<tr><th>{{ size }}</th><td>{{ length }}</td></tr>{% endif %}{% endfor %}</tbody></table></div>
+    {% else %}
+      <p class="text-muted">Số đo tham khảo cho áo unisex MỘC (cm).</p><div class="table-responsive"><table class="table text-center"><thead><tr><th>Size</th><th>Ngực</th><th>Chiều cao</th><th>Cân nặng</th></tr></thead><tbody><tr><th>S</th><td>84–90</td><td>155–165</td><td>45–55 kg</td></tr><tr><th>M</th><td>90–96</td><td>160–170</td><td>55–65 kg</td></tr><tr><th>L</th><td>96–102</td><td>168–178</td><td>65–75 kg</td></tr><tr><th>XL</th><td>102–110</td><td>175–185</td><td>75–90 kg</td></tr></tbody></table></div>
+    {% endif %}
+  </div></div></div></div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.querySelectorAll('input[name="size"]').forEach(input => input.addEventListener('change', () => document.querySelector('#selectedSize').textContent = input.value));
+  document.querySelectorAll('input[name="color"]').forEach(input => input.addEventListener('change', () => document.querySelector('#selectedColor').textContent = input.dataset.label));
+  document.querySelectorAll('[data-quantity]').forEach(button => button.addEventListener('click', () => { const input = document.querySelector('#quantity'); const change = button.dataset.quantity === 'plus' ? 1 : -1; input.value = Math.max(1, Math.min(5, Number(input.value) + change)); }));
+  document.querySelectorAll('.product-thumbs button').forEach(button => button.addEventListener('click', () => { document.querySelector('#mainProductImage').src = button.dataset.image; document.querySelectorAll('.product-thumbs button').forEach(item => item.classList.remove('active')); button.classList.add('active'); }));
+</script>
+{% endblock %}

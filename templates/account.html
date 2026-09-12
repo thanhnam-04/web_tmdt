@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Đơn hàng của tôi — MỘC Store{% endblock %}
+{% block content %}
+  <section class="page-title bg-light"><div class="container py-7"><p class="small fw-bolder text-uppercase tracking-wider text-muted">Tài khoản của bạn</p><h1 class="display-4 fw-bold">Đơn hàng của tôi</h1><p class="lead text-muted mb-0">Theo dõi các đơn hàng đã đặt tại MỘC Store.</p></div></section>
+  <section class="container py-7">
+    {% if orders %}
+      <div class="data-panel"><div class="panel-title"><div><p>LỊCH SỬ MUA HÀNG</p><h3>{{ orders|length }} dòng sản phẩm</h3></div><a href="{{ url_for('index') }}" class="btn btn-dark btn-sm">Mua thêm</a></div><div class="table-responsive"><table class="table align-middle"><thead><tr><th>Đơn hàng</th><th>Sản phẩm</th><th>Phân loại</th><th>Thanh toán</th><th>Tổng</th><th>Trạng thái</th></tr></thead><tbody>{% for order in orders %}<tr><td><b>#{{ order.order_code or ('MOC%04d'|format(order.id)) }}</b><small class="d-block text-muted">{{ order.created_at or 'Dữ liệu mẫu' }}</small></td><td><b>{{ order.product_name }}</b><small class="d-block text-muted">Số lượng: {{ order.quantity }}</small></td><td>{{ order.color or 'Màu mặc định' }} · {{ 'Cỡ' if order.size and order.size.isdigit() else 'Size' }} {{ order.size or 'M' }}</td><td>{{ {'cod':'COD','bank':'Chuyển khoản','card':'Thẻ test'}.get(order.payment_method, 'COD') }}</td><td><b>{{ order.total|vnd }}</b></td><td><span class="role-badge order-status">{{ order.status or 'Đang xử lý' }}</span></td></tr>{% endfor %}</tbody></table></div></div>
+      <div class="account-address mt-5"><i class="ri-map-pin-user-line ri-2x text-orange"></i><div><b>Địa chỉ nhận hàng gần nhất</b><p class="mb-0 text-muted">{{ orders[0].shipping_address or 'Chưa có đơn đặt hàng mới.' }}</p></div></div>
+    {% else %}
+      <div class="empty-state"><i class="ri-shopping-bag-line ri-4x"></i><h2>Bạn chưa có đơn hàng</h2><p>Chọn một sản phẩm để bắt đầu hành trình cùng MỘC.</p><a class="btn btn-dark" href="{{ url_for('index') }}">Khám phá sản phẩm</a></div>
+    {% endif %}
+  </section>
+{% endblock %}

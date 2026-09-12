@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Thanh toán — MỘC Store{% endblock %}
+
+{% block content %}
+  <section class="page-title bg-light"><div class="container py-6"><p class="small fw-bolder text-uppercase tracking-wider text-muted">Hoàn tất đơn hàng</p><h1 class="display-5 fw-bold">Thông tin thanh toán</h1><div class="checkout-steps mt-4"><span class="done"><b><i class="ri-check-line"></i></b> Giỏ hàng</span><i></i><span class="active"><b>2</b> Giao hàng</span><i></i><span><b>3</b> Hoàn tất</span></div></div></section>
+
+  <form method="post" class="container py-7 checkout-form" novalidate>
+    <div class="row g-5">
+      <div class="col-12 col-lg-8">
+        <section class="checkout-card">
+          <div class="checkout-card-title"><span>01</span><div><h3>Thông tin người nhận</h3><p>Chúng tôi dùng thông tin này để giao đơn hàng.</p></div></div>
+          <div class="row g-4"><div class="col-md-6"><label class="form-label">Họ và tên *</label><input class="form-control form-control-lg" name="full_name" value="{{ form.get('full_name', '') }}" placeholder="Nguyễn Minh Anh" required></div><div class="col-md-6"><label class="form-label">Số điện thoại *</label><input class="form-control form-control-lg" name="phone" value="{{ form.get('phone', profile.phone or '') }}" placeholder="09xx xxx xxx" required></div><div class="col-12"><label class="form-label">Email *</label><input class="form-control form-control-lg" type="email" name="email" value="{{ form.get('email', '') }}" placeholder="ban@example.com" required></div></div>
+        </section>
+
+        <section class="checkout-card">
+          <div class="checkout-card-title"><span>02</span><div><h3>Địa chỉ giao hàng</h3><p>Kiểm tra kỹ số nhà, đường và khu vực.</p></div></div>
+          <div class="row g-4"><div class="col-12"><label class="form-label">Địa chỉ *</label><input class="form-control form-control-lg" name="address" value="{{ form.get('address', profile.address or '') }}" placeholder="Số nhà, tên đường/phường" required></div><div class="col-md-6"><label class="form-label">Quận/Huyện *</label><input class="form-control form-control-lg" name="district" value="{{ form.get('district', '') }}" placeholder="Thanh Xuân" required></div><div class="col-md-6"><label class="form-label">Tỉnh/Thành phố *</label><select class="form-select form-select-lg" name="city" required><option value="">Chọn tỉnh/thành</option>{% for city in ['Hà Nội','TP. Hồ Chí Minh','Đà Nẵng','Hải Phòng','Cần Thơ','Thừa Thiên Huế','Tỉnh thành khác'] %}<option value="{{ city }}" {{ 'selected' if form.get('city') == city else '' }}>{{ city }}</option>{% endfor %}</select></div><div class="col-12"><label class="form-label">Ghi chú giao hàng</label><textarea class="form-control" name="checkout_note" rows="2" placeholder="Ví dụ: gọi trước khi giao">{{ form.get('checkout_note', '') }}</textarea></div></div>
+        </section>
+
+        <section class="checkout-card">
+          <div class="checkout-card-title"><span>03</span><div><h3>Phương thức thanh toán</h3><p>Không có giao dịch tiền thật trong website demo này.</p></div></div>
+          <div class="payment-options">
+            <label><input type="radio" name="payment" value="cod" {{ 'checked' if form.get('payment','cod') == 'cod' else '' }}><span class="payment-icon"><i class="ri-truck-line"></i></span><span><b>Thanh toán khi nhận hàng</b><small>Trả tiền mặt cho đơn vị vận chuyển</small></span><i class="ri-checkbox-circle-fill check"></i></label>
+            <label><input type="radio" name="payment" value="bank" {{ 'checked' if form.get('payment') == 'bank' else '' }}><span class="payment-icon"><i class="ri-bank-line"></i></span><span><b>Chuyển khoản ngân hàng</b><small>Thông tin giả lập dùng cho bài demo</small></span><i class="ri-checkbox-circle-fill check"></i></label>
+            <div class="payment-detail" data-payment-panel="bank"><b>Ngân hàng MỘC Demo</b><span>STK: 0000 1234 5678 · MỘC STORE DEMO</span><small>Nội dung: mã đơn hàng được tạo sau khi đặt hàng.</small></div>
+            <label><input type="radio" name="payment" value="card" {{ 'checked' if form.get('payment') == 'card' else '' }}><span class="payment-icon"><i class="ri-bank-card-line"></i></span><span><b>Thẻ ngân hàng test</b><small>Chỉ kiểm tra định dạng, không gửi tới cổng thanh toán</small></span><i class="ri-checkbox-circle-fill check"></i></label>
+            <div class="payment-detail" data-payment-panel="card"><div class="alert alert-warning small"><i class="ri-error-warning-line"></i> Không nhập thông tin thẻ thật. Dùng số test <code>4242 4242 4242 4242</code>.</div><div class="row g-3"><div class="col-12"><label>Số thẻ test</label><input class="form-control" name="card_number" value="{{ form.get('card_number', '') }}" inputmode="numeric" maxlength="19" placeholder="4242 4242 4242 4242"></div><div class="col-6"><label>Ngày hết hạn</label><input class="form-control" name="expiry" value="{{ form.get('expiry', '') }}" maxlength="5" placeholder="12/30"></div><div class="col-6"><label>CVV test</label><input class="form-control" name="cvv" value="" maxlength="4" inputmode="numeric" placeholder="123"></div></div></div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="col-12 col-lg-4"><div class="checkout-summary sticky-lg-top"><h4 class="fw-bold">Đơn hàng của bạn</h4><div class="checkout-items">{% for item in items %}{% set pic = visual(item.product.id) %}<div><img src="{{ url_for('static', filename='images/products/' ~ pic.image) }}" alt="{{ item.product.name }}"><p><b>{{ item.product.name }}</b><small>{{ item.color }} · {{ 'Cỡ' if item.category == 'Giày trekking' else 'Size' }} {{ item.size }} · SL {{ item.quantity }}</small></p><strong>{{ item.subtotal|vnd }}</strong></div>{% endfor %}</div><hr><div class="summary-line"><span>Tạm tính</span><b>{{ subtotal|vnd }}</b></div><div class="summary-line"><span>Giảm giá</span><b class="text-danger">−{{ discount|vnd }}</b></div><div class="summary-line"><span>Vận chuyển</span><b>{{ 'Miễn phí' if shipping == 0 else shipping|vnd }}</b></div><div class="summary-total"><span>Tổng thanh toán<small>Đã bao gồm VAT</small></span><strong>{{ grand_total|vnd }}</strong></div><button class="btn btn-orange text-white w-100 py-3 fw-bold" type="submit">Đặt hàng <i class="ri-lock-line ms-2"></i></button><p class="checkout-disclaimer"><i class="ri-shield-check-line"></i> Đây là giao dịch mô phỏng phục vụ đồ án. Không thu tiền và không lưu dữ liệu thẻ.</p></div></aside>
+    </div>
+  </form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const paymentInputs = document.querySelectorAll('input[name="payment"]');
+  function togglePaymentPanels() {
+    const selected = document.querySelector('input[name="payment"]:checked').value;
+    document.querySelectorAll('[data-payment-panel]').forEach(panel => panel.hidden = panel.dataset.paymentPanel !== selected);
+  }
+  paymentInputs.forEach(input => input.addEventListener('change', togglePaymentPanels));
+  togglePaymentPanels();
+  const card = document.querySelector('input[name="card_number"]');
+  card.addEventListener('input', () => card.value = card.value.replace(/\D/g, '').slice(0,16).replace(/(.{4})/g, '$1 ').trim());
+  const expiry = document.querySelector('input[name="expiry"]');
+  expiry.addEventListener('input', () => { const value = expiry.value.replace(/\D/g, '').slice(0,4); expiry.value = value.length > 2 ? value.slice(0,2) + '/' + value.slice(2) : value; });
+</script>
+{% endblock %}

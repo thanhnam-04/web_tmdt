@@ -1,0 +1,25 @@
+{% macro product_card(product) %}
+  {% set pic = visual(product.id) %}
+  {% set options = product_options(product.id) %}
+  <div class="card position-relative h-100 card-listing hover-trigger border-0">
+    {% if product.id|int % 3 == 0 %}<span class="badge card-badge bg-secondary">-{{ 10 + (product.id|int % 4) * 5 }}%</span>{% endif %}
+    <div class="card-header p-0 border-0">
+      <a href="{{ url_for('product', id=product.id) }}" class="product-picture d-block bg-light overflow-hidden">
+        <img class="w-100 img-fluid position-relative z-index-10" src="{{ url_for('static', filename='images/products/' ~ pic.image) }}" alt="{{ product.name }}">
+        {% if pic.hover != pic.image %}<img class="w-100 img-fluid position-absolute z-index-20 start-0 top-0 hover-show" src="{{ url_for('static', filename='images/products/' ~ pic.hover) }}" alt="{{ product.name }}">{% endif %}
+      </a>
+      <form class="card-actions" action="{{ url_for('add_cart', product_id=product.id) }}" method="post">
+        <input type="hidden" name="color" value="{{ options.default_color }}">
+        <span class="small text-uppercase tracking-wide fw-bolder d-block mb-3">Chọn {{ 'cỡ giày' if options.size_kind == 'shoe' else 'size' }} để thêm</span>
+        {% for size in options.sizes[:4] %}<button class="btn btn-outline-dark btn-sm mx-1" type="submit" name="size" value="{{ size }}">{{ size }}</button>{% endfor %}
+      </form>
+    </div>
+    <div class="card-body px-0 text-center">
+      <small class="d-block text-muted text-uppercase fw-bold mb-1">{{ options.category }}</small>
+      <div class="text-orange small mb-1"><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i><span class="text-muted fw-bold ms-2">4.8 ({{ 86 + product.id|int * 7 }})</span></div>
+      <a class="mb-0 mx-2 fs-p link-cover text-decoration-none d-block text-center" href="{{ url_for('product', id=product.id) }}">{{ product.name }}</a>
+      <small class="d-block text-muted text-truncate px-3 mt-1">{{ product.description }}</small>
+      <p class="fw-bolder m-0 mt-2">{{ product.price|vnd }}</p>
+    </div>
+  </div>
+{% endmacro %}

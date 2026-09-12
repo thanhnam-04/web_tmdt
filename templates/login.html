@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Đăng nhập — MỘC Store{% endblock %}
+{% block content %}
+  <section class="login-page"><div class="row g-0 min-vh-75">
+    <div class="col-lg-6 login-image d-none d-lg-flex"><div><p class="small fw-bolder text-uppercase tracking-wider">MỘC MEMBER</p><h1 class="display-3 fw-bold">Mỗi hành trình<br>đều có câu chuyện.</h1><p class="lead">Đăng nhập để tiếp tục câu chuyện của bạn.</p></div></div>
+    <div class="col-12 col-lg-6 d-flex align-items-center"><div class="login-form mx-auto p-4 p-md-7 w-100"><a class="moc-logo mb-6 d-inline-block" href="{{ url_for('index') }}">MỘC<span>.</span><small>VIETNAM OUTDOORS</small></a><p class="small fw-bolder text-uppercase tracking-wider text-muted">Chào bạn trở lại</p><h2 class="display-6 fw-bold mb-2">Đăng nhập</h2><p class="text-muted mb-5">Tài khoản khách dùng thử: <code>demo / demo</code></p>
+      <form method="post"><label class="form-label fw-bold" for="username">Tên đăng nhập</label><div class="input-group mb-4"><span class="input-group-text bg-white"><i class="ri-user-line"></i></span><input class="form-control py-3" id="username" name="username" placeholder="Tên đăng nhập" required></div><div class="d-flex justify-content-between"><label class="form-label fw-bold" for="password">Mật khẩu</label><a class="small" href="#">Quên mật khẩu?</a></div><div class="input-group mb-4"><span class="input-group-text bg-white"><i class="ri-lock-line"></i></span><input class="form-control py-3" id="password" name="password" type="password" placeholder="Mật khẩu"></div><label class="form-check mb-4"><input class="form-check-input" type="checkbox"><span class="form-check-label">Ghi nhớ đăng nhập</span></label><button class="btn btn-orange text-white w-100 py-3 fw-bold">Đăng nhập <i class="ri-arrow-right-line ms-2"></i></button></form>
+    </div></div>
+  </div></section>
+{% endblock %}

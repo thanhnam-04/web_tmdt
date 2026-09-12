@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% from "_macros.html" import product_card with context %}
+{% block title %}MỘC Store — Đi để trở về{% endblock %}
+{% block content %}
+  <section class="moc-hero position-relative bg-overlay-dark">
+    <div class="hero-bg"></div>
+    <div class="container h-100 d-flex align-items-center justify-content-center position-relative z-index-10 text-white text-center">
+      <div class="hero-copy">
+        <p class="small fw-bolder text-uppercase tracking-wider mb-3">Bộ sưu tập Thu Đông 2026</p>
+        <h1 class="display-1 fw-bold mx-auto">Đi thật xa.<br>Để thấy Việt Nam gần hơn.</h1>
+        <p class="lead col-lg-7 mx-auto mt-4">Trang phục dã ngoại thiết kế cho khí hậu và những cung đường Việt Nam.</p>
+        <div class="d-md-flex justify-content-center mt-5">
+          <a href="{{ url_for('search', q='nam') }}" class="btn btn-skew-left btn-orange btn-orange-chunky text-white mx-1 w-100 w-md-auto mb-2"><span>Đồ nam <i class="ri-arrow-right-line"></i></span></a>
+          <a href="{{ url_for('search', q='nữ') }}" class="btn btn-skew-left btn-light btn-chunky mx-1 w-100 w-md-auto mb-2"><span>Đồ nữ <i class="ri-arrow-right-line"></i></span></a>
+        </div>
+      </div>
+    </div>
+    <a href="#hang-moi" class="hero-scroll"><i class="ri-mouse-line ri-2x"></i></a>
+  </section>
+
+  <section class="bg-light py-4"><div class="container"><div class="row align-items-center text-center g-4 local-brands"><div class="col-6 col-md"><b>MỘC</b><small>ORIGINALS</small></div><div class="col-6 col-md"><b>TRƯỜNG SƠN</b><small>GEAR</small></div><div class="col-6 col-md"><b>ĐÀ LẠT</b><small>WEEKEND</small></div><div class="col-6 col-md"><b>LANG BIANG</b><small>TRAIL</small></div><div class="col-6 col-md"><b>PHỐ CỔ</b><small>DAILY</small></div><div class="col-6 col-md"><a href="{{ url_for('search', q='') }}" class="fw-bolder">Xem tất cả <i class="ri-arrow-right-line"></i></a></div></div></div></section>
+
+  <section class="mb-9 mt-7" id="hang-moi">
+    <div class="container">
+      <div class="w-md-50 mb-5"><p class="small fw-bolder text-uppercase tracking-wider mb-2 text-muted">Mộc chọn cho bạn</p><h2 class="display-5 fw-bold mb-3">Sản phẩm được yêu thích</h2><p class="lead">Những thiết kế linh hoạt từ phố thị đến đường mòn, vừa vặn với nhịp sống người Việt.</p></div>
+      <div class="row g-4">{% for product in products %}<div class="col-6 col-md-4 col-lg-3">{{ product_card(product) }}</div>{% endfor %}</div>
+      <div class="text-center mt-6"><a class="btn btn-dark px-5 py-3" href="{{ url_for('search', q='') }}">Khám phá 128 sản phẩm</a></div>
+    </div>
+  </section>
+
+  <section class="container-fluid px-0 my-10"><div class="row g-0 split-banner"><div class="col-md-7 banner-photo"></div><div class="col-md-5 bg-dark text-white d-flex align-items-center"><div class="p-5 p-lg-8"><p class="small fw-bolder text-uppercase tracking-wider text-orange">Một dải Việt Nam</p><h2 class="display-4 fw-bold">Từ đỉnh gió<br>đến phố quen.</h2><p class="lead opacity-75 mt-4">Một chiếc áo tốt không chỉ giữ ấm. Nó giữ lại ký ức về những con đường bạn đã đi qua.</p><a href="{{ url_for('search', q='hoodie') }}" class="btn btn-orange text-white mt-3 px-4 py-3">Xem hoodie <i class="ri-arrow-right-line"></i></a></div></div></div></section>
+
+  <section class="container my-10"><div class="row g-5 align-items-center"><div class="col-md-5"><p class="small fw-bolder text-uppercase tracking-wider text-muted">Chuyện của MỘC</p><h2 class="display-5 fw-bold">Thiết kế từ trải nghiệm thật.</h2><p class="lead">Chúng tôi thử sản phẩm trong mưa phùn Hà Nội, gió lạnh Sa Pa và nắng gắt miền Trung để mỗi chi tiết đều có lý do tồn tại.</p><div class="row mt-5"><div class="col-4"><b class="fs-2">63</b><small class="d-block text-muted">tỉnh thành</small></div><div class="col-4"><b class="fs-2">30</b><small class="d-block text-muted">ngày đổi trả</small></div><div class="col-4"><b class="fs-2">24h</b><small class="d-block text-muted">hỗ trợ</small></div></div></div><div class="col-md-7"><img class="img-fluid" src="{{ url_for('static', filename='images/banners/banner-4.jpg') }}" alt="Hành trình ngoài trời"></div></div></section>
+
+  <section class="bg-light py-8"><div class="container"><div class="row text-center g-5"><div class="col-md-4"><i class="ri-truck-line ri-3x text-orange"></i><h5 class="fw-bold mt-3">Giao hàng toàn quốc</h5><p class="text-muted">Miễn phí từ 799.000 ₫</p></div><div class="col-md-4"><i class="ri-arrow-go-back-line ri-3x text-orange"></i><h5 class="fw-bold mt-3">Đổi trả trong 30 ngày</h5><p class="text-muted">Đơn giản, minh bạch và nhanh chóng</p></div><div class="col-md-4"><i class="ri-customer-service-2-line ri-3x text-orange"></i><h5 class="fw-bold mt-3">Tư vấn bằng tiếng Việt</h5><p class="text-muted">08:00–22:00 mỗi ngày</p></div></div></div></section>
+{% endblock %}
